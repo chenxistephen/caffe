@@ -137,7 +137,6 @@ int main(int argc, char** argv) {
   int data_size = 0, image_db_label;
   bool data_size_initialized = false;
   count = 0;
-  int corrupted_image_count = 0;
   
   
   while (std::getline(infile, line))
