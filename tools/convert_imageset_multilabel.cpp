@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
         "    http://www.image-net.org/download-images\n");
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  if (argc < 4) {
+  if (argc < 5) {
     gflags::ShowUsageWithFlagsRestrict(argv[0], "tools/convert_imageset");
     return 1;
   }
@@ -82,9 +82,10 @@ int main(int argc, char** argv) {
     || ((FLAGS_resize_height != 0 || FLAGS_resize_width != 0) && !FLAGS_encoded))
     << "Resizing is not supported when encoded is on. Do not set resized_width and resize_height";
 
-  const string input_path = argv[1];
-  const string db_path = argv[2];
-  const string category_list_path = argv[3];
+  const string root_folder(argv[1]);
+  const string input_path = argv[2];
+  const string db_path = argv[3];
+  const string category_list_path = argv[4];
 
   const bool is_color = !FLAGS_gray;
   const bool check_size = FLAGS_check_size;
@@ -102,7 +103,7 @@ int main(int argc, char** argv) {
 
   // Create new DB for image
   scoped_ptr<db::DB> image_db(db::GetDB(FLAGS_backend));
-  image_db->Open(argv[3], db::NEW);
+  image_db->Open(db_path, db::NEW);
   scoped_ptr<db::Transaction> image_db_txn(image_db->NewTransaction());
 
   // Create new DB for multilabel
@@ -130,7 +131,7 @@ int main(int argc, char** argv) {
   int category_count = count;
 
   // Storing to db
-  // std::string root_folder(argv[1]);
+  
   Datum image_datum;
   std::vector<std::string> tuple;
   std::string labels, img_file;
