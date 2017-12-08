@@ -405,6 +405,13 @@ message LayerParameter {
   optional ThresholdParameter threshold_param = 128;
   optional TileParameter tile_param = 138;
   optional WindowDataParameter window_data_param = 129;
+  optional ElementwiseSigmoidLogisticLossParameter elementwise_sigmoid_logistic_loss_parameter = 214;
+}
+
+message ElementwiseSigmoidLogisticLossParameter {
+  // Specify the positive category weight
+  optional float positive_loss_weight = 1 [default = 1.0];
+  optional float negative_sample_ratio = 2 [default = 1.0];
 }
 
 // Message that stores parameters used to apply transformation
