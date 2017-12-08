@@ -2,7 +2,7 @@
 # Compute the mean image from the imagenet training lmdb
 # N.B. this is available in data/ilsvrc12
 
-EXAMPLE=examples/visual_intent
+EXAMPLE=lmdb/visual_intent_30
 DATA=data/VisualIntent
 TOOLS=build/tools
 
