@@ -3,17 +3,19 @@
 # N.B. set the path to the imagenet train + val data dirs
 set -e
 
-EXAMPLE=lmdb/visual_intent_30
-DATA=data/VisualIntent
+REDO=true
+LMDBDIR=lmdb/visual_intent_30
+DATA=data/VisualIntent/Annotations_multiclass
 TOOLS=build/tools
-CATEGORY_LIST=$DATA/taxonomy/visual_intent_30_labels.txt
+CATEGORY_LIST=data/VisualIntent/taxonomy/visual_intent_30_labels.txt
+DBPREFIX=visual_intent
 
-TRAIN_DATA_ROOT=./data/VisualIntent/Images
-VAL_DATA_ROOT=./data/VisualIntent/Images
+TRAIN_DATA_ROOT=./data/VisualIntent/Images/
+VAL_DATA_ROOT=./data/VisualIntent/Images/
 
 # Set RESIZE=true to resize the images to 256x256. Leave as false if images have
 # already been resized using another tool.
-RESIZE=false
+RESIZE=true
 if $RESIZE; then
   RESIZE_HEIGHT=256
   RESIZE_WIDTH=256
@@ -43,7 +45,7 @@ GLOG_logtostderr=1 $TOOLS/convert_imageset_multilabel \
     --resize_width=$RESIZE_WIDTH \
     $TRAIN_DATA_ROOT \
     $DATA/train.txt \
-    $EXAMPLE/visual_intent_train_lmdb \
+    $LMDBDIR/visual_intent_train_lmdb \
     $CATEGORY_LIST
 
 echo "Creating val lmdb..."
@@ -53,7 +55,7 @@ GLOG_logtostderr=1 $TOOLS/convert_imageset_multilabel \
     --resize_width=$RESIZE_WIDTH \
     $VAL_DATA_ROOT \
     $DATA/val.txt \
-    $EXAMPLE/visual_intent_val_lmdb \
+    $LMDBDIR/visual_intent_val_lmdb \
     $CATEGORY_LIST
 
 echo "Done."

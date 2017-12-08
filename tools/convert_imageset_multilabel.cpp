@@ -52,7 +52,7 @@ DEFINE_bool(encoded, false,
     "When this option is on, the encoded image will be save in image_datum");
 DEFINE_string(encode_type, "",
     "Optional: What type should we encode the image as ('png','jpg',...).");
-DEFINE_bool(multilabel, false,
+DEFINE_bool(multilabel, true,
   "When this option is on, treat data as multilabel");
 
 int main(int argc, char** argv) {
@@ -126,6 +126,7 @@ int main(int argc, char** argv) {
   {
     boost::trim_if(line, boost::is_any_of(" \n\r\t"));
     category_mapping.insert({ line, count });
+    std::cout << count << ":" << line << "\n";
     ++count;
   }
   int category_count = count;
@@ -148,6 +149,8 @@ int main(int argc, char** argv) {
     
     string fn = tuple[0];
     labels = tuple[1];
+    if ( (count+1) % 1000 == 0)
+        std::cout << count+1 << ": " << fn << ": " << labels << std::endl;
     image_db_label = is_multilabel ? 0 : category_mapping[labels];
     
     // Process image
@@ -161,7 +164,7 @@ int main(int argc, char** argv) {
       enc = fn.substr(p);
       std::transform(enc.begin(), enc.end(), enc.begin(), ::tolower);
     }
-    status = ReadImageToDatum(fn,
+    status = ReadImageToDatum(root_folder + fn,
         image_db_label, resize_height, resize_width, is_color,
         enc, &image_datum);
     if (status == false) continue;
@@ -182,6 +185,15 @@ int main(int argc, char** argv) {
 
     if (is_multilabel) {
       boost::split(multilabels, labels, boost::is_any_of(","));
+      if ( (count+1) % 1000 == 0) {
+          std::cout << count+1 << ":" ;
+          for (int i = 0; i < multilabels.size(); i++)
+          {
+              string l = multilabels[i];
+              std::cout << l << ",";
+          }
+          std::cout << std::endl;
+      }
       label_datum.set_channels(category_count);
       label_datum.set_height(1);
       label_datum.set_width(1);
