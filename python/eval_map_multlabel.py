@@ -55,13 +55,18 @@ top_k = 5000
 
 if __name__ == '__main__':
     resFile = sys.argv[1] if len(sys.argv) > 1 else '../visualizations/pred_results/caffenet_softmax_iter_50000.npy'
+    modelName = osp.splitext(osp.basename(resFile))[0]
+    outputFolder = osp.dirname(resFile)
+    print modelName
     imglistFile = '../VisualIntent/ImageSets/val.txt'
     labelFile = '../VisualIntent/taxonomy/visual_intent_30_labels.txt'
     annoFile = '../VisualIntent/Annotations_multiclass/val.txt'
     classes = [l.rstrip() for l in open(labelFile,'r').readlines()]
     gtLabels = parseGT(annoFile, classes)
     np.savetxt('tmp.gt',gtLabels,fmt="%d")
-    outFile = '../visualizations/pred_results/map_caffenet_softmax_iter_50000.tsv'
+    outputDir = '../outputs/pred_results/'
+    
+    outFile = osp.join(outputFolder, 'map_' + modelName + '.tsv')
     use_07_metric = False
 
     imglist = [l.rstrip() for l in open(imglistFile,'r').readlines()]
@@ -140,6 +145,13 @@ if __name__ == '__main__':
     weighted_map = np.sum(np.multiply(all_ap, all_npos))
     map_ind = np.argsort(-np.array(all_ap))
     with open(outFile,'wb') as f:
+        f.write('Original Class AP\n')
+        for i in range(len(classes)):
+            f.write("{}\t{:.3f}\n".format(classes[i], all_ap[i]))
+        f.write("\n\nmAP = {:.3f}\n".format(map))
+        f.write("Weighted AP = {:.3f}\n".format(weighted_map))
+        f.write("=============================================================")
+        f.write('\n\nSorted Class AP\n')
         for i in map_ind:
             f.write("{}\t{:.3f}\n".format(classes[i], all_ap[i]))
         f.write("mAP = {:.3f}\n".format(map))
